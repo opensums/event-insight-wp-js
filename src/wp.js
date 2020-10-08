@@ -1,62 +1,37 @@
 let settings;
 
-const state = {};
-
-function logHttpError(request) {
-  // request.responseJSON
-  // request.responseText
-  // request.status e.g. 403
-  // request.statusText e.g. 'Forbidden'
-  let message;
-  if (request.responseJSON) {
-    message = request.responseJSON.error;
-  } else if (request.responseText) {
-    message = request.responseText;
-  }
-
-  settings
-    .jquery('<div></div>')
-    .html(message)
-    .dialog({
-      title: `Error ${request.status} ${request.statusText}`,
-      xresizable: false,
-      modal: true,
-      xbuttons: {
-        OK: () => {
-          settings.jquery(this).dialog('close');
-        },
-      },
-    });
-}
-
-function promisify(jqr) {
-  const promise = jqr.promise();
-  promise.catch = function (cb) {
-    this.then(undefined, cb);
-    return this;
-  };
-  return promise;
-}
+const state = {
+  requestCount: 0,
+  responseCount: 0,
+  errorCount: 0,
+};
 
 // Return a promise to prevent modification of the sent request.
 function get(path) {
-  return promisify(
-    settings.jquery.ajax({
-      url: settings.baseurl + path,
+  const { m, nonce, baseurl } = settings;
+  state.requestCount += 1;
+  return m
+    .request({
+      url: baseurl + path,
       method: 'GET',
-      beforeSend: (request) => {
-        request.setRequestHeader('X-WP-Nonce', settings.nonce);
+      headers: {
+        'X-WP-Nonce': nonce,
       },
     })
-  ).catch((request) => {
-    logHttpError(request);
-  });
+    .catch((error) => {
+      state.errorCount += 1;
+      throw error;
+    })
+    .then(() => {
+      state.responseCount += 1;
+    });
 }
 
-function init(store, { jquery, wpApiSettings }) {
+function init(store, { jquery, m, wpApiSettings }) {
   store.wp = this;
   store.state.wp = state;
   settings = {
+    m,
     jquery,
     baseurl: wpApiSettings.root + 'event-insight/v1',
     nonce: wpApiSettings.nonce,

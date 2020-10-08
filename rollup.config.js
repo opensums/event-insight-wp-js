@@ -1,4 +1,8 @@
 // rollup.config.js
+
+import commonjs from '@rollup/plugin-commonjs';
+import resolve from '@rollup/plugin-node-resolve';
+
 import { terser } from 'rollup-plugin-terser';
 
 // Make sure these properties are set in package.json!
@@ -35,6 +39,8 @@ export default {
   input: 'src/index.js',
 
   external: Object.keys(globals),
+
+  plugins: [commonjs(), resolve()],
 
   output: [
     {
