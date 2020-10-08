@@ -29,20 +29,28 @@ function logHttpError(request) {
     });
 }
 
+function promisify(jqr) {
+  const promise = jqr.promise();
+  promise.catch = function (cb) {
+    this.then(undefined, cb);
+    return this;
+  };
+  return promise;
+}
+
 // Return a promise to prevent modification of the sent request.
 function get(path) {
-  return settings.jquery
-    .ajax({
+  return promisify(
+    settings.jquery.ajax({
       url: settings.baseurl + path,
       method: 'GET',
       beforeSend: (request) => {
         request.setRequestHeader('X-WP-Nonce', settings.nonce);
       },
     })
-    .fail((request) => {
-      logHttpError(request);
-    })
-    .promise();
+  ).catch((request) => {
+    logHttpError(request);
+  });
 }
 
 function init(store, { jquery, wpApiSettings }) {

@@ -16,3 +16,5 @@ jquery('#event-insight-get-ticket-tailor-events').on('click', () => {
   jquery('#event-insight-ticket-tailor-events').html('Loading');
   store.ticketTailorEvents.getEvents();
 });
+
+// Gives the jquery version: console.log(jquery.fn.jquery);

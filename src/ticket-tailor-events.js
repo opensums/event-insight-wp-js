@@ -13,8 +13,8 @@ function dateFormat(timestamp) {
 // Ticket tailor event tickets.
 function loadTicketsForTicketTailorEvent(eventId) {
   wp.get('/ticket-tailor/event/' + eventId + '/tickets')
-    .fail()
-    .done((data) => {
+    .catch()
+    .then((data) => {
       const customQuestions = [];
       const customQuestionsMap = {};
       new Tabulator('#event-insight-ticket-tailor-tickets', {
@@ -77,8 +77,9 @@ function loadTicketsForTicketTailorEvent(eventId) {
 
 function getEvents() {
   wp.get('/ticket-tailor/events')
-    .fail()
-    .done((data) => {
+    // Ought to do something with an error.
+    .catch()
+    .then((data) => {
       new Tabulator('#event-insight-ticket-tailor-events', {
         layout: 'fitDataFill',
         columns: [
@@ -129,7 +130,6 @@ function getEvents() {
 }
 
 function init(store, options) {
-  console.log('TT Events init', this);
   store.ticketTailorEvents = this;
   store.state.ticketTailorEvents = state;
 
