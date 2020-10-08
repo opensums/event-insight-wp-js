@@ -1,16 +1,18 @@
-import $ from 'jquery';
+import jquery from 'jquery';
+import wpApiSettings from 'wpApiSettings';
 
 import Tabulator from 'Tabulator';
 
-import './wp';
-import { init } from './ticket-tailor-events';
+import { store } from './store';
 
-init({ Tabulator });
+import { wp } from './wp';
+import { ticketTailorEvents } from './ticket-tailor-events';
 
-import { promises } from './store';
+wp.init(store, { jquery, wpApiSettings });
+ticketTailorEvents.init(store, { jquery, Tabulator });
 
 // Ticket tailor events.
-$('#event-insight-get-ticket-tailor-events').on('click', () => {
-  $('#event-insight-ticket-tailor-events').html('');
-  promises.ticketTailorEvents.getEvents();
+jquery('#event-insight-get-ticket-tailor-events').on('click', () => {
+  jquery('#event-insight-ticket-tailor-events').html('Loading');
+  store.ticketTailorEvents.getEvents();
 });

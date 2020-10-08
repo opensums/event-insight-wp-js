@@ -1,11 +1,6 @@
-import $ from 'jquery';
+let settings;
 
-import { promises } from './store';
-
-const baseurl = wpApiSettings.root + 'event-insight/v1';
-const nonce = wpApiSettings.nonce;
-
-import wpApiSettings from 'wpApiSettings';
+const state = {};
 
 function logHttpError(request) {
   // request.responseJSON
@@ -19,7 +14,8 @@ function logHttpError(request) {
     message = request.responseText;
   }
 
-  $('<div></div>')
+  settings
+    .jquery('<div></div>')
     .html(message)
     .dialog({
       title: `Error ${request.status} ${request.statusText}`,
@@ -27,25 +23,36 @@ function logHttpError(request) {
       modal: true,
       xbuttons: {
         OK: () => {
-          $(this).dialog('close');
+          settings.jquery(this).dialog('close');
         },
       },
     });
 }
 
-promises.wp = {
-  // Return a promise to prevent modification of the sent request.
-  get(path) {
-    return $.ajax({
-      url: baseurl + path,
+// Return a promise to prevent modification of the sent request.
+function get(path) {
+  return settings.jquery
+    .ajax({
+      url: settings.baseurl + path,
       method: 'GET',
       beforeSend: (request) => {
-        request.setRequestHeader('X-WP-Nonce', nonce);
+        request.setRequestHeader('X-WP-Nonce', settings.nonce);
       },
     })
-      .fail((request) => {
-        logHttpError(request);
-      })
-      .promise();
-  },
-};
+    .fail((request) => {
+      logHttpError(request);
+    })
+    .promise();
+}
+
+function init(store, { jquery, wpApiSettings }) {
+  store.wp = this;
+  store.state.wp = state;
+  settings = {
+    jquery,
+    baseurl: wpApiSettings.root + 'event-insight/v1',
+    nonce: wpApiSettings.nonce,
+  };
+}
+
+export const wp = { init, get };
