@@ -1,33 +1,25 @@
-/* global module */
-
 module.exports = {
+  root: true,
   env: {
-    browser: true,
-    es2021: true,
+    node: true,
   },
-
-  extends: ['eslint:recommended', 'prettier'],
-
+  extends: ['plugin:vue/essential', 'eslint:recommended', '@vue/prettier'],
   parserOptions: {
-    ecmaVersion: 12,
-    sourceType: 'module',
+    parser: 'babel-eslint',
   },
-
-  plugins: ['prettier'],
-
-  overrides: [
-    Object.assign(
-      {
-        files: ['**/*.test.js'],
-        env: { jest: true },
-        plugins: ['jest'],
-      },
-      // eslint-disable-next-line no-undef
-      require('eslint-plugin-jest').configs.recommended
-    ),
-  ],
-
   rules: {
-    'prettier/prettier': ['error'],
+    'no-console': process.env.NODE_ENV === 'production' ? 'warn' : 'off',
+    'no-debugger': process.env.NODE_ENV === 'production' ? 'warn' : 'off',
   },
+  overrides: [
+    {
+      files: [
+        '**/__tests__/*.{j,t}s?(x)',
+        '**/tests/unit/**/*.spec.{j,t}s?(x)',
+      ],
+      env: {
+        jest: true,
+      },
+    },
+  ],
 };

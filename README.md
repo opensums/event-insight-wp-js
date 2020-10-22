@@ -1,10 +1,31 @@
-# event-insight-wp-js
+# event-insight-wp-vue
 
-Client-side JavaScript for Event Insight plugin for WordPress
+## Project setup
+```
+npm install
+```
 
-## Development
+### Compiles and hot-reloads for development
+```
+npm run serve
+```
+
+### Compile and minify for production, copy to test server.
 ```console
-$ npm run lint
-$ npm run test
+$ npm run build:copy
+$ # To build without copying to the local test server:
 $ npm run build
 ```
+
+### Run your unit tests
+```
+npm run test:unit
+```
+
+### Lints and fixes files
+```
+npm run lint
+```
+
+### Customize configuration
+See [Configuration Reference](https://cli.vuejs.org/config/).
